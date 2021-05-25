@@ -1,0 +1,50 @@
+
+<div id="frontpage"> 
+
+    <div id="about">
+    <h3> This is our newsletter and you can sign up to get the newsletter <br>
+    sent directly to your email! </h3>
+    </div>
+
+<form method="POST" action="/contact/sendMail">
+    <div align="center">
+    <div id="box">
+        <h2>Sign up to out newsletter here</h2>
+        
+        <label for="">Name</label><br>
+        <input type="text" name="name" placeholder="Name"><br>
+
+        <label for="">Telephone</label><br>
+        <input type="text" placeholder="Telephone"><br>
+
+        <label for="">Email</label><br>
+        <input type="email" name="email" placeholder="Email"><br>
+
+        <label for="">Subject</label><br>
+        <input type="text" name="subject" placeholder="subject"><br>
+
+        <label for="" >Message</label><br>
+        <textarea type="text" name="message" placeholder="Message"></textarea><br>
+
+        <button type="submit">Contact me</button>
+        </div>
+    </div>
+</form>
+
+
+<script>
+        fetch("/contact", {
+                "body": JSON.stringify({})
+        })
+</script>
+
+
+
+
+        
+    <!-- id = # and class = . -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="./newsletter.js"></script>
+
+
+</div>
