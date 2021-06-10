@@ -1,6 +1,9 @@
 
 <div id="frontpage"> 
 
+
+<link rel="stylesheet" type="text/css" href="newsletter.css">
+
     <div id="about">
     <h3> This is our newsletter and you can sign up to get the newsletter <br>
     sent directly to your email! </h3>
@@ -11,20 +14,18 @@
     <div id="box">
         <h2>Sign up to out newsletter here</h2>
         
-        <label for="">Name</label><br>
-        <input type="text" name="name" placeholder="Name"><br>
+        
+        <input class="box" type="name" name="name" 
+            id="name" placeholder="Name " required/><br>
 
-        <label for="">Telephone</label><br>
-        <input type="text" placeholder="Telephone"><br>
+        
+        <input class="box" type="text" name="phone" id="phone"  
+            placeholder="Phone Number " required/><br>
 
-        <label for="">Email</label><br>
-        <input type="email" name="email" placeholder="Email"><br>
+        
+        <input class="box" type="email" name="email" id="email" 
+            placeholder="E-Mail " required /><br>
 
-        <label for="">Subject</label><br>
-        <input type="text" name="subject" placeholder="subject"><br>
-
-        <label for="" >Message</label><br>
-        <textarea type="text" name="message" placeholder="Message"></textarea><br>
 
         <button type="submit">Contact me</button>
         </div>

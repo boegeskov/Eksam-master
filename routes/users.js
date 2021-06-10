@@ -1,8 +1,6 @@
 const router = require("express").Router(); // den sidste parantes instansere linjen. // dummy route
 
 
-
-
 router.get("/api/users", (req, res) => {
     
 });

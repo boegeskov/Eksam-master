@@ -1,0 +1,28 @@
+<div id="frontpage">
+
+
+<link rel="stylesheet" type="text/css" href="users.css">
+
+
+<body>
+
+<section class="get">
+    <h3>Get data</h3>
+    <a href="/show_prof">Load data </a>
+    <div>
+        {{# each item }}
+            <article class="item">
+                <div> Name: {{this.name}} </div>
+                <div> Email: {{this.email}} </div>
+                <div> phone: {{this.phone}} </div>
+            </article>
+        {{/each}}
+    </div>
+</section>
+
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+</div>

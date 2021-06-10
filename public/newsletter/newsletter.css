@@ -11,9 +11,20 @@
 }
 
 #box {
-    width: 320px;
+    width: 400px;
     padding: 10px;
     border: 5px solid gray;
     margin: 0;
   }
+
+
+  input{
+    font-family: 'Helvetica', serif;
+    width: 50%;
+    font-size: 20px;
+    padding: 12px 20px;
+    margin: 8px 0;
+    border: none;
+    border-bottom: 2px solid #767474;
+}
   
