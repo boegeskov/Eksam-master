@@ -5,7 +5,7 @@ const MongoClient = require('mongodb').MongoClient;
 
 const url = "mongodb+srv://nicklas:ncnfunmax@node.gs8f9.mongodb.net/mydb?retryWrites=true&w=majority"
 
-MongoClient.connect(url, function(err, db) {
+/*MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     const dbo = db.db("mydb");
     let myobj = [{ name: "Nicklas Bøge", address: "Flensborggade 3" },
@@ -18,9 +18,9 @@ MongoClient.connect(url, function(err, db) {
         console.log(res);
         db.close();
     });
-});
+});*/
 
-MongoClient.connect(url, function(err, db) {
+/*MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     const dbo = db.db("mydb");
     dbo.collection("customers").find({}, { projection: { _id: 0 } }).toArray(function(err, result) {
@@ -30,7 +30,7 @@ MongoClient.connect(url, function(err, db) {
         console.log(result);
         db.close();
     });
-}); 
+}); */
 
 
 /* MongoClient.connect(url, function(err, db) {
