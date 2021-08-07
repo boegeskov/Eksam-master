@@ -13,6 +13,10 @@ socket.on('message', text => {
     document.querySelector('ul').appendChild(el)
 });
 
+socket.on('chat-message', ({ name, message }) => {
+    appendMessage(message, name);
+});
+
 document.querySelector('button').onclick = () => {
     const text = document.querySelector('input').value;
     socket.emit('message', text)
@@ -20,37 +24,37 @@ document.querySelector('button').onclick = () => {
 
 
 appendMessage('You joined')
-console.log("Ny bruger ", name)
-socket.emit('new-user', name)
+socket.emit('join-room', chatRoom);
 
-
-socket.on('user-connected', (name, room) => {
+/*socket.on('user-connected', (name, room) => {
     appendMessage(`${name} connected`)
 });
 
 socket.on('user-disconnected', (name, room) => {
     appendMessage(`${name} disconnected`)
-});
+});*/
 
 messageForm.addEventListener('submit', e => {
     e.preventDefault()
     const message = messageInput.value
-    appendMessage(`you: ${message}`)
-    console.log(`you: ${message}`)
-    socket.emit('send-chat-message', message, currentRoom)
+    socket.emit('send-chat-message', { room: chatRoom, message });
     messageInput.value = ''
 });
 
-function appendMessage(message)
+function appendMessage(message, name)
 {
+    const msg = name ? `${name}: ${message}` : message;
+
     const messageElement = document.createElement('div')
-    messageElement.innerText = message
+    messageElement.innerText = msg;
     messageContainer.append(messageElement)
 }
 
 
+
+
 console.log("fetching rooms")
-fetch('http://localhost:8080/rooms/list')
+/*fetch('http://localhost:8080/rooms/list')
   .then(response => response.json())
   .then(data => data.map((room) => {
     let d = document.createElement('div')   
@@ -84,12 +88,12 @@ fetch('http://localhost:8080/rooms/list')
     }
     document.getElementById("rooms-listView").append(d)
     })
-);
+);*/
 
 
 //Onclickhandler room
 
-function getUserList(name)
+/*function getUserList(name)
 {
     console.log("fetching Users")
     fetch(`http://localhost:8080/rooms/${name}/users`)
@@ -107,4 +111,17 @@ function getUserList(name)
 
       }
     )
-}
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
+

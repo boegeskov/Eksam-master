@@ -8,20 +8,14 @@ const MongoClient = require('mongodb').MongoClient;
 /*let database
 let dbUsers*/
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
-let salt;
-bcrypt.genSalt(saltRounds, (e,salt1) => {
 
-    salt = salt1
-    
-});
+const expressSession = require('express-session');
+const cookieParser = require('cookie-parser');
 
 
-//nyt
-const passport = require('passport');
 app.use(express.json()); //to check to see if library has been set right
 app.use(express.urlencoded({ extended: true})); 
-
+app.use(cookieParser());
 
 const bodyParser = require("body-parser");
   
@@ -31,61 +25,61 @@ mongoose.connect('mongodb+srv://nicklas:ncnfunmax@node.gs8f9.mongodb.net/mydb?re
     useUnifiedTopology: true
 };
 
-
 const db = mongoose.connection;
 db.on('error', console.log.bind(console, "connection error"));
 db.once('open', function(callback){
     console.log("connection succeeded");
 });
-  
+
+
 //nyt
-app.use(express.static("chat"))
+app.use(express.static("chat"));
   
 app.use(bodyParser.json());
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-  
-app.post('/sign_up', function(req,res){
-    const name = req.body.name;
-    const email =req.body.email;
-    const pass = req.body.password;
-    const phone =req.body.phone;
-  
-    const data = {
-        "name": name,
-        "email":email,
-        "password":pass,
-        "phone":phone
-    }
-db.collection('details').insertOne(data,function(err, collection){
-        if (err) throw err;
-        console.log("Record inserted Successfully");
-              
-    });
-          
-    return res.redirect('/views/users.html');
+
+
+const session = expressSession({
+    secret: 'your secret key',
+    resave: false,
+    saveUninitialized: false
 });
 
+app.use(session);
 
-app.get('/show_prof', function(req, res) {
-    const resultArray = [];
-    db.connect(url, function(err, db) {
-        const cursor = db.collection('details').find();
-        cursor.forEach(function(doc, err) {
-            resultArray.push(doc);
-        }, function() {
-            db.close();
-            res.send('profile', {items: resultArray});
+//nyt
+const passport = require('passport');
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function(user, done) {
+    done(null, user);
+});
+passport.deserializeUser(function(user, done) {
+    done(null, user);
+});
+
+const LocalStrategy = require('passport-local').Strategy;
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+      db.collection('users').findOne({ username }, function (err, user) {
+        if (err) { return done(err); }
+        if (!user) { return done(null, false); }
+        bcrypt.compare(password, user.password, function(err, result) {
+            if (err) return done(err);
+            if (result) return done(null, user);
         });
-    });
-});
-    
+      });
+    }
+));
 
 
-/*const chatRouter = require("./routes/chat.js");
-app.use(chatRouter.router);*/
+const chatRouter = require("./routes/chatroute.js");
+app.use(chatRouter.router);
 
 const gameRouter = require("./routes/game.js");
 app.use(gameRouter.router);
@@ -161,18 +155,28 @@ app.get("/newsletter", (req, res) => {
     res.send(navbar + register + footer);
 });*/
 
-app.get("/register", (req, res) => {
+/*app.get("/register", (req, res) => {
     res.send(navbar + users + footer);
-});
+});*/
 
-app.get("/profile", (req, res) => {
+/*app.get("/profile", (req, res) => {
     res.send(navbar + profile + footer);
-});
+});*/
 
 //nyt
-app.post('/loginPassPort',
-  passport.authenticate('local', { successRedirect: '/chat',
+app.post('/login',
+  passport.authenticate('local', { successRedirect: '/chat2',
                                    failureRedirect: '/login' }));
+
+/*app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    const user = await db.collection('users').findOne({ username, password });
+
+    if (user) {
+
+    }
+});*/
 
 app.get("/login", (req, res) => {
     res.send(navbar + login.replace("${message}","") + footer);
@@ -184,6 +188,27 @@ app.get("/newUser", (req, res) => {
 
 app.post('/newUser', async (req, res) => 
 {
+    const email = req.body.email;
+    const username = req.body.username;
+    const password = req.body.password;
+    
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const data = {
+        "email":email,
+        "username": username,
+        "password":hashedPassword
+    }
+
+    db.collection('users').insertOne(data,function(err, collection){
+        if (err) throw err;
+        console.log("Record inserted Successfully");
+    });
+            
+    return res.redirect('/views/users.html');
+
+
+    /*
     let email = req.body.email
     let username = req.body.username
     let password = req.body.password
@@ -218,17 +243,17 @@ app.post('/newUser', async (req, res) =>
 
         }
     }
-    res.send(navbar + login.replace("{message}","Det gik galt") + footer)  
+    res.send(navbar + login.replace("{message}","Det gik galt") + footer) */
 });
 
-app.post("/login", async function(req, res) {
+/*app.post("/login", async function(req, res) {
     console.log('LOGIN username', req.body.username, ' og password', req.body.password)
 
 
     //var password = "hundenViggo";
     
         // Query for a movie that has the title 'Back to the Future'
-        const query = { name: req.body.username };
+        const query = { name: req.body.username }; // sådan her bruger thea ikke session object
         const user = await db.findOne(query);
         if (user === null)
         {
@@ -263,7 +288,7 @@ app.post("/login", async function(req, res) {
        // await client.close();
       //}
     //run().catch(console.dir);
-})
+})*/
 
 
 app.get("/users", (req, res) => {
@@ -304,22 +329,73 @@ const server = app.listen(PORT, (error) => {
 //Socket functions
 
 //Json Arrays containing the chatrooms and users
-const usersArray = {}
-let roomsList = ["Games","Food","General"];
+const rooms = {
+    chat: {
+        name: 'Chat',
+        users: []
+    },
+    food: {
+        name: 'Food',
+        users: []
+    },
+    games: {
+        name: 'Games',
+        users: []
+    }
+}
+
+/*let roomsList = ["Games","Food","General"];
 let roomsArray = { "games"   :  {name:"Games",   users:['Louise','Per','Thor','Thea','Viggo']},
                    "food"    :  {name:"Food",    users:['Viggo', 'Mikkel']},
                    "general" :  {name:"General", users:['Nicklas', 'emilie']}
-                 };
+                 };*/
 
 
-const io = require("socket.io")(PORT)
+const io = require("socket.io")(server)
+
+
+io.use((socket, next) => {
+  session(socket.request, socket.request.res, next);
+}).use((socket, next) => {
+  passport.initialize()(socket.request, socket.request.res, next);
+}).use((socket, next) => {
+  passport.session()(socket.request, socket.request.res, next);
+});
+
+io.use((socket, next) => {
+    if (socket.request.isAuthenticated()) return next();
+    next(new Error('Authentication failed.'));
+});
 
 //General chatroom
 io.on('connection', socket => 
 {
+    const user = socket.request.user;
 
-    socket.on('new-user', name => 
+    socket.on('send-chat-message', ({ room, message }) => {
+        for (const socketId of rooms[room].users) {
+            io.to(socketId).emit('chat-message', { message: message, name: user.username });
+        }
+    });
+
+    socket.on('join-room', (room) => {
+        rooms[room].users.push(socket.id);
+        io.to(room).emit(`${user.name} has joined ${room}`);
+    });
+
+    socket.on('disconnect', () => {
+        for (const [roomId, room] of Object.entries(rooms)) {
+            if (room.users.indexOf(socket.id) !== -1) {
+                room.users.splice(room.users.indexOf(socket.id), 1);
+            }
+        }
+    });
+
+    //usersArray[socket.id] = name;
+
+    /*socket.on('new-user', name => 
     {
+        console.log(socket.request)
         //Give the new user connected to a chat a new name
         usersArray[socket.id] = name
         //Server sends broadcast message to everyone subscribed to the same topic,
@@ -345,12 +421,12 @@ io.on('connection', socket =>
     })
 
 
-    socket.on('send-chat-message', (message, room) => 
+    socket.on('send-chat-message', (message) => 
     {
         //'room-'+room.toLowerCase()+'-chat-message'
         //Server broadcasts message to every user subscribed, with a new message, except for the one sending that message
-        console.log("Is the room undefined?", room)
-        socket.broadcast.emit('room-'+room.toLowerCase()+'-chat-message', {message: message, name:usersArray[socket.id]})
+        console.log("Is the room undefined?")
+        socket.broadcast.emit('-chat-message', {message: message, name:usersArray[socket.id]})
         console.log('char-message "',message,'"')   //Debug line
     })
 
@@ -399,7 +475,7 @@ io.on('connection', socket =>
         speRoom.users.splice(idx, 1)
         socket.broadcast.emit('room-'+room.toLowerCase()+'-user-leave', name)
         //console.log('char-message "',message,'"')   //Debug line
-    })
+    })*/
 });
 
 

@@ -1,11 +1,34 @@
-<div id="frontpage">  
+<div id="frontpage">
+<head>
 
-
-
-        
-    <!-- id = # and class = . -->
+       <!-- id = # and class = . -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="./dragons.js"></script>
+    <script src="socket.io/socket.io.js">
+    
+    </script>
 
+    <script>
+        const chatRoom = 'games';
+    </script>
+    <script defer src="chat/chat.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    
+
+
+    <br><br>
+    <div id='rooms-listView'></div>
+
+    <div id="message-container">
+    <form id="send-container" style="display: inline-block;">
+        <input type="text" id="message-input">
+        <button type="submit" id="send-button">Send</button>
+    </form>
+    </div>
+
+   
+
+    <div id="users-List"></div>
 
 </div>
