@@ -314,7 +314,7 @@ app.get('/rooms/:name/users', (req, res) =>
 
 
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 80;
 
 const server = app.listen(PORT, (error) => {
     if (error) {
