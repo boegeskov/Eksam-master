@@ -62,11 +62,14 @@ body {
       float: left;
   }
   #message-container {
-      color: rgb(21, 231, 84);
-      background-color: linen;
-      width: 50%;
-      float: left;
+    background-color: gainsboro;
+    color: red;
+    margin: 10px;
+    padding: 20px 20px 20px 80px;
+    position: relative;
   }
+
+
   #users-List {
       color: rgb(64, 11, 211);
       background-color: linen;
